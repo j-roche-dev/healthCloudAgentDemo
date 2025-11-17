@@ -161,10 +161,11 @@ export default class AccountSummaryAccordion extends LightningElement {
             this.flowTimeoutId = null;
         }
 
-        if (event.detail.status === 'FINISHED') {
+        // Handle both FINISHED and FINISHED_SCREEN statuses
+        if (event.detail.status === 'FINISHED' || event.detail.status === 'FINISHED_SCREEN') {
             this.isFlowRunning = false;
             this.showFlowComponent = false;
-            console.log('Flow finished successfully');
+            console.log('Flow finished successfully with status:', event.detail.status);
             // Refresh the summaries after flow completes
             refreshApex(this.wiredSummariesResult);
         } else if (event.detail.status === 'ERROR') {
