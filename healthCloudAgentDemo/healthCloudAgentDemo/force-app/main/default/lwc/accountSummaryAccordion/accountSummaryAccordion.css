@@ -87,7 +87,7 @@ lightning-formatted-rich-text {
     color: var(--lwc-colorTextDefault, #080707);
     font-size: 1rem;
     display: block;
-    margin-top: 1.5rem;
+    margin-top: 1rem;
     margin-bottom: 0.75rem;
     border-bottom: 1px solid #e5e5e5;
     padding-bottom: 0.25rem;
