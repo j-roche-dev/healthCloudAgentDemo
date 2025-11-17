@@ -1,0 +1,69 @@
+<template>
+    <lightning-card title="Account Summaries" icon-name="custom:custom63">
+        <template if:true={isLoading}>
+            <div class="slds-p-around_medium slds-text-align_center">
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:true={error}>
+            <div class="slds-p-around_medium">
+                <div class="slds-text-color_error">
+                    <lightning-icon icon-name="utility:error" size="small" variant="error"></lightning-icon>
+                    Error loading summaries. Please refresh the page.
+                </div>
+            </div>
+        </template>
+
+        <template if:true={hasSummaries}>
+            <div class="accordion-container">
+                <!-- Active Summary Display -->
+                <template if:true={activeSummary}>
+                    <div class="active-summary slds-p-around_medium">
+                        <div class="summary-header slds-m-bottom_small">
+                            <lightning-icon icon-name="utility:notebook" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                            <span class="summary-label">{activeSummary.label}</span>
+                        </div>
+                        <div class="summary-content">
+                            <lightning-formatted-rich-text value={activeSummary.Agentforce_Summary__c}>
+                            </lightning-formatted-rich-text>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Accordion Tabs (only show if multiple summaries exist) -->
+                <template if:true={hasMultipleSummaries}>
+                    <div class="accordion-tabs slds-border_top">
+                        <div class="tabs-header slds-p-horizontal_medium slds-p-vertical_x-small slds-text-heading_small">
+                            Other Summaries
+                        </div>
+                        <template for:each={accountSummaries} for:item="summary">
+                            <template if:false={summary.isActive}>
+                                <div
+                                    key={summary.Id}
+                                    class="tab-item slds-p-around_small slds-border_top"
+                                    data-id={summary.Id}
+                                    onclick={handleSectionClick}
+                                >
+                                    <div class="tab-content">
+                                        <lightning-icon icon-name="utility:chevronright" size="xx-small" class="slds-m-right_x-small"></lightning-icon>
+                                        <span class="tab-label">{summary.label}</span>
+                                    </div>
+                                </div>
+                            </template>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <template if:false={hasSummaries}>
+            <template if:false={isLoading}>
+                <div class="slds-p-around_medium slds-text-align_center">
+                    <lightning-icon icon-name="utility:info" size="small" class="slds-m-bottom_small"></lightning-icon>
+                    <p class="slds-text-color_weak">No Account Summaries available for this account.</p>
+                </div>
+            </template>
+        </template>
+    </lightning-card>
+</template>

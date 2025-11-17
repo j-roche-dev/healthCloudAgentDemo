@@ -1,0 +1,88 @@
+.accordion-container {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+.active-summary {
+    background-color: var(--lwc-colorBackgroundAlt, #f3f3f3);
+    border-radius: 4px;
+}
+
+.summary-header {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 0.875rem;
+    color: var(--lwc-colorTextDefault, #080707);
+}
+
+.summary-label {
+    color: var(--lwc-colorTextLabel, #3e3e3c);
+}
+
+.summary-content {
+    line-height: 1.5;
+    color: var(--lwc-colorTextDefault, #080707);
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* Accordion Tabs Styling */
+.accordion-tabs {
+    margin-top: 0.5rem;
+}
+
+.tabs-header {
+    background-color: var(--lwc-colorBackgroundAlt, #f3f3f3);
+    font-weight: 600;
+    color: var(--lwc-colorTextLabel, #3e3e3c);
+}
+
+.tab-item {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.tab-item:hover {
+    background-color: var(--lwc-colorBackgroundRowHover, #f3f3f3);
+    border-left-color: var(--lwc-brandAccessible, #0176d3);
+}
+
+.tab-content {
+    display: flex;
+    align-items: center;
+}
+
+.tab-label {
+    font-size: 0.875rem;
+    color: var(--lwc-colorTextDefault, #080707);
+}
+
+/* Scrollbar styling for webkit browsers */
+.accordion-container::-webkit-scrollbar,
+.summary-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.accordion-container::-webkit-scrollbar-track,
+.summary-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.accordion-container::-webkit-scrollbar-thumb,
+.summary-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.accordion-container::-webkit-scrollbar-thumb:hover,
+.summary-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Rich text formatting */
+lightning-formatted-rich-text {
+    font-size: 0.875rem;
+}
