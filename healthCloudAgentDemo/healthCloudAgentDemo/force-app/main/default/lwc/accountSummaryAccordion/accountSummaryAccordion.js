@@ -1,4 +1,5 @@
 import { LightningElement, api, wire } from 'lwc';
+import { refreshApex } from '@salesforce/apex';
 import getAccountSummaries from '@salesforce/apex/AccountSummaryController.getAccountSummaries';
 
 export default class AccountSummaryAccordion extends LightningElement {
@@ -8,9 +9,15 @@ export default class AccountSummaryAccordion extends LightningElement {
     activeSection = '';
     error;
     isLoading = true;
+    isFlowRunning = false;
+    wiredSummariesResult;
+
+    flowApiName = 'Run_Eigen_X_Account_Summary';
 
     @wire(getAccountSummaries, { accountId: '$recordId' })
-    wiredSummaries({ error, data }) {
+    wiredSummaries(result) {
+        this.wiredSummariesResult = result;
+        const { error, data } = result;
         this.isLoading = false;
         if (data) {
             this.accountSummaries = data.map((summary, index) => {
@@ -61,5 +68,34 @@ export default class AccountSummaryAccordion extends LightningElement {
 
     get activeSummary() {
         return this.accountSummaries.find(s => s.isActive);
+    }
+
+    get flowInputVariables() {
+        return [
+            {
+                name: 'recordId',
+                type: 'String',
+                value: this.recordId
+            }
+        ];
+    }
+
+    handleGenerateSummary() {
+        this.isFlowRunning = true;
+        const flowComponent = this.template.querySelector('lightning-flow');
+        if (flowComponent) {
+            flowComponent.startFlow(this.flowApiName, this.flowInputVariables);
+        }
+    }
+
+    handleFlowStatusChange(event) {
+        if (event.detail.status === 'FINISHED') {
+            this.isFlowRunning = false;
+            // Refresh the summaries after flow completes
+            refreshApex(this.wiredSummariesResult);
+        } else if (event.detail.status === 'ERROR') {
+            this.isFlowRunning = false;
+            console.error('Flow error:', event.detail);
+        }
     }
 }

@@ -1,5 +1,19 @@
 <template>
     <lightning-card title="Account Summaries" icon-name="custom:custom63">
+        <!-- Actions slot for button when summaries exist -->
+        <template if:true={hasSummaries}>
+            <div slot="actions">
+                <lightning-button
+                    label="Generate Summary"
+                    onclick={handleGenerateSummary}
+                    disabled={isFlowRunning}
+                    variant="neutral"
+                    icon-name="utility:refresh"
+                    class="slds-m-right_x-small">
+                </lightning-button>
+            </div>
+        </template>
+
         <template if:true={isLoading}>
             <div class="slds-p-around_medium slds-text-align_center">
                 <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
@@ -59,11 +73,34 @@
 
         <template if:false={hasSummaries}>
             <template if:false={isLoading}>
-                <div class="slds-p-around_medium slds-text-align_center">
-                    <lightning-icon icon-name="utility:info" size="small" class="slds-m-bottom_small"></lightning-icon>
-                    <p class="slds-text-color_weak">No Account Summaries available for this account.</p>
+                <div class="slds-p-around_large slds-text-align_center empty-state">
+                    <lightning-icon icon-name="custom:custom63" size="large" class="slds-m-bottom_medium empty-state-icon"></lightning-icon>
+                    <h3 class="slds-text-heading_medium slds-m-bottom_small">No Account Summaries Yet</h3>
+                    <p class="slds-text-color_weak slds-m-bottom_medium">
+                        Generate an AI-powered summary to get insights about this account.
+                    </p>
+                    <lightning-button
+                        label="Generate Account Summary"
+                        onclick={handleGenerateSummary}
+                        disabled={isFlowRunning}
+                        variant="brand"
+                        icon-name="utility:einstein"
+                        class="slds-m-top_small">
+                    </lightning-button>
+                    <template if:true={isFlowRunning}>
+                        <div class="slds-m-top_medium">
+                            <lightning-spinner alternative-text="Generating summary" size="small"></lightning-spinner>
+                            <p class="slds-text-color_weak slds-m-top_small">Generating your summary...</p>
+                        </div>
+                    </template>
                 </div>
             </template>
         </template>
+
+        <!-- Hidden flow component -->
+        <lightning-flow
+            flow-api-name={flowApiName}
+            onstatuschange={handleFlowStatusChange}>
+        </lightning-flow>
     </lightning-card>
 </template>

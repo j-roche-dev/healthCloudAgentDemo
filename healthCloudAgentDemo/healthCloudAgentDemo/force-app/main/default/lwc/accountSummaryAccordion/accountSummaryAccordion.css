@@ -80,3 +80,17 @@
 lightning-formatted-rich-text {
     font-size: 0.875rem;
 }
+
+/* Empty state styling */
+.empty-state {
+    padding: 3rem 2rem;
+}
+
+.empty-state-icon {
+    opacity: 0.5;
+}
+
+/* Flow component - hidden by default */
+lightning-flow {
+    display: none;
+}
