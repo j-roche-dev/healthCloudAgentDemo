@@ -3,7 +3,17 @@ import { refreshApex } from '@salesforce/apex';
 import getAccountSummaries from '@salesforce/apex/AccountSummaryController.getAccountSummaries';
 
 export default class AccountSummaryAccordion extends LightningElement {
-    @api recordId; // Account Id from the record page
+    _recordId;
+
+    @api
+    get recordId() {
+        return this._recordId;
+    }
+
+    set recordId(value) {
+        this._recordId = value;
+        console.log('recordId setter called with value:', value);
+    }
 
     accountSummaries = [];
     activeSection = '';
@@ -13,6 +23,14 @@ export default class AccountSummaryAccordion extends LightningElement {
     wiredSummariesResult;
 
     flowApiName = 'Run_Eigen_X_Account_Summary';
+
+    connectedCallback() {
+        console.log('Component connected. recordId:', this.recordId);
+    }
+
+    renderedCallback() {
+        console.log('Component rendered. recordId:', this.recordId);
+    }
 
     @wire(getAccountSummaries, { accountId: '$recordId' })
     wiredSummaries(result) {
@@ -81,21 +99,48 @@ export default class AccountSummaryAccordion extends LightningElement {
     }
 
     handleGenerateSummary() {
+        console.log('Generate Summary clicked');
+        console.log('recordId:', this.recordId);
+        console.log('flowInputVariables:', JSON.stringify(this.flowInputVariables));
+
+        if (!this.recordId) {
+            console.error('recordId is not available');
+            return;
+        }
+
         this.isFlowRunning = true;
         const flowComponent = this.template.querySelector('lightning-flow');
         if (flowComponent) {
+            console.log('Starting flow:', this.flowApiName);
             flowComponent.startFlow(this.flowApiName, this.flowInputVariables);
+        } else {
+            console.error('Flow component not found');
+            this.isFlowRunning = false;
         }
     }
 
     handleFlowStatusChange(event) {
+        console.log('Flow status changed:', event.detail.status);
+        console.log('Full event detail:', JSON.stringify(event.detail, null, 2));
+
         if (event.detail.status === 'FINISHED') {
             this.isFlowRunning = false;
+            console.log('Flow finished successfully');
             // Refresh the summaries after flow completes
             refreshApex(this.wiredSummariesResult);
         } else if (event.detail.status === 'ERROR') {
             this.isFlowRunning = false;
-            console.error('Flow error:', event.detail);
+            console.error('Flow error status:', event.detail.status);
+            console.error('Flow error detail:', event.detail);
+            console.error('Flow error outputVariables:', event.detail.outputVariables);
+            console.error('Flow error message:', event.detail.message);
+
+            // Try to extract more error info
+            if (event.detail.outputVariables) {
+                event.detail.outputVariables.forEach(variable => {
+                    console.error(`Variable ${variable.name}:`, variable.value);
+                });
+            }
         }
     }
 }
