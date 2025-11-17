@@ -81,6 +81,44 @@ lightning-formatted-rich-text {
     font-size: 0.875rem;
 }
 
+/* Enhanced rich text styling for manual DOM */
+.formatted-summary strong {
+    font-weight: 700;
+    color: var(--lwc-colorTextDefault, #080707);
+    font-size: 1rem;
+    display: block;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid #e5e5e5;
+    padding-bottom: 0.25rem;
+}
+
+.formatted-summary strong:first-child {
+    margin-top: 0;
+}
+
+.formatted-summary ul {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+    padding-left: 0;
+}
+
+.formatted-summary li {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+    list-style-type: disc;
+}
+
+.formatted-summary p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: var(--lwc-colorTextDefault, #3e3e3c);
+}
+
+.formatted-summary p:empty {
+    display: none;
+}
+
 /* Empty state styling */
 .empty-state {
     padding: 3rem 2rem;

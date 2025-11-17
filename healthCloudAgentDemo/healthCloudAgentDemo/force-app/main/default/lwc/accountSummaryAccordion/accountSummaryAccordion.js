@@ -47,6 +47,16 @@ export default class AccountSummaryAccordion extends LightningElement {
                 this.showFlowComponent = false;
             }
         }
+
+        // Update the manual DOM for formatted summary
+        this.updateFormattedSummary();
+    }
+
+    updateFormattedSummary() {
+        const summaryDiv = this.template.querySelector('.formatted-summary');
+        if (summaryDiv && this.activeSummary && this.activeSummary.formattedSummary) {
+            summaryDiv.innerHTML = this.activeSummary.formattedSummary;
+        }
     }
 
     @wire(getAccountSummaries, { accountId: '$recordId' })
@@ -59,7 +69,8 @@ export default class AccountSummaryAccordion extends LightningElement {
                 return {
                     ...summary,
                     isActive: index === 0, // First item active by default
-                    label: this.formatSummaryLabel(summary)
+                    label: this.formatSummaryLabel(summary),
+                    formattedSummary: this.convertMarkdownToHtml(summary.Agentforce_Summary__c)
                 };
             });
             if (this.accountSummaries.length > 0) {
@@ -83,16 +94,64 @@ export default class AccountSummaryAccordion extends LightningElement {
         return summary.Name || 'Account Summary';
     }
 
+    convertMarkdownToHtml(markdownText) {
+        if (!markdownText) return '';
+        
+        console.log('Original markdown:', markdownText);
+        
+        let html = markdownText;
+        
+        // Convert **bold** to <strong>bold</strong>
+        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        
+        // Convert line breaks to <br> tags but preserve paragraph structure  
+        html = html.replace(/\n\n/g, '</p><p>');
+        html = html.replace(/\n/g, '<br>');
+        
+        // Wrap in paragraph tags
+        html = '<p>' + html + '</p>';
+        
+        // Clean up empty paragraphs
+        html = html.replace(/<p><\/p>/g, '');
+        html = html.replace(/<p><br><\/p>/g, '');
+        
+        // Handle bullet points - convert lines starting with - to <li>
+        html = html.replace(/<p>- (.*?)<\/p>/g, '<li>$1</li>');
+        html = html.replace(/<br>- (.*?)<br>/g, '</li><li>$1');
+        
+        // Wrap consecutive <li> elements in <ul>
+        html = html.replace(/(<li>.*?<\/li>)/gs, '<ul>$1</ul>');
+        
+        // Clean up nested lists and extra breaks
+        html = html.replace(/<\/ul><ul>/g, '');
+        html = html.replace(/<br><ul>/g, '<ul>');
+        html = html.replace(/<\/ul><br>/g, '</ul>');
+        
+        // Handle HTML entities that might be present
+        html = html.replace(/&amp;/g, '&');
+        html = html.replace(/&#39;/g, "'");
+        
+        console.log('Converted HTML:', html);
+        
+        return html;
+    }
+
     handleSectionClick(event) {
         const clickedId = event.currentTarget.dataset.id;
 
         // Update active state for all summaries
         this.accountSummaries = this.accountSummaries.map(summary => ({
             ...summary,
-            isActive: summary.Id === clickedId
+            isActive: summary.Id === clickedId,
+            formattedSummary: summary.formattedSummary || this.convertMarkdownToHtml(summary.Agentforce_Summary__c)
         }));
 
         this.activeSection = clickedId;
+        
+        // Update the formatted summary display
+        setTimeout(() => {
+            this.updateFormattedSummary();
+        }, 0);
     }
 
     get hasMultipleSummaries() {

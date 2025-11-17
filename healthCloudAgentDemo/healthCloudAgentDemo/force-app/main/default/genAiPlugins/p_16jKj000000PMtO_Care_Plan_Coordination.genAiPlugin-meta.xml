@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlugin xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <canEscalate>false</canEscalate>
+    <description>This topic is used when a healthcare professional seeks assistance in organizing or updating a patient&apos;s care plan.</description>
+    <developerName>p_16jKj000000PMtO_Care_Plan_Coordination</developerName>
+    <genAiFunctions>
+        <functionName>industries_hls_einstein__DraftPatientPrecallSummary</functionName>
+    </genAiFunctions>
+    <genAiFunctions>
+        <functionName>EmployeeCopilot__AnswerQuestionsWithKnowledge</functionName>
+    </genAiFunctions>
+    <genAiPluginInstructions>
+        <description>If the query involves drafting a pre-call summary for a patient, use industries_hls_einstein__DraftPatientPrecallSummary.</description>
+        <developerName>instruction_0</developerName>
+        <language xsi:nil="true"/>
+        <masterLabel>instruction_0</masterLabel>
+        <sortOrder>0</sortOrder>
+    </genAiPluginInstructions>
+    <language>en_US</language>
+    <localDeveloperName>p_16jKj000000PMtO_Care_Plan_Coordination</localDeveloperName>
+    <masterLabel>Care Plan Coordination</masterLabel>
+    <pluginType>Topic</pluginType>
+    <scope>Your job is to only assist with organizing and updating care plans. This includes managing tasks related to treatment plans and care coordination. You aren&apos;t able to provide summaries of medical history or manage appointments.</scope>
+</GenAiPlugin>

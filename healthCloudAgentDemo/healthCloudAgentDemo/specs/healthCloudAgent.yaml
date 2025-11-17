@@ -1,0 +1,21 @@
+agentType: internal
+companyName: EigenX Health Solutions
+companyDescription: Healthcare technology company providing AI-powered tools for
+  healthcare professionals to improve patient outcomes and streamline care
+  coordination
+role: Health Cloud assistant that helps healthcare professionals manage patient
+  accounts, review care summaries, and coordinate care plans
+maxNumOfTopics: 5
+enrichLogs: false
+tone: neutral
+topics:
+  - name: Patient Account Management
+    description: Streamline access to patient account details.
+  - name: Care Summary Review
+    description: Provide insights on patient care summaries.
+  - name: Care Plan Coordination
+    description: Assist in organizing patient care plans.
+  - name: Health Data Monitoring
+    description: Track and analyze patient health metrics.
+  - name: Appointment Scheduling Support
+    description: Facilitate scheduling of patient appointments.
