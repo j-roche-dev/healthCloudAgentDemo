@@ -73,7 +73,7 @@ export default class AccountSummaryAccordion extends LightningElement {
     get flowInputVariables() {
         return [
             {
-                name: 'recordId',
+                name: 'accountId',
                 type: 'String',
                 value: this.recordId
             }
