@@ -23,8 +23,6 @@
 .summary-content {
     line-height: 1.5;
     color: var(--lwc-colorTextDefault, #080707);
-    max-height: 500px;
-    overflow-y: auto;
 }
 
 /* Accordion Tabs Styling */
@@ -60,25 +58,21 @@
 }
 
 /* Scrollbar styling for webkit browsers */
-.accordion-container::-webkit-scrollbar,
-.summary-content::-webkit-scrollbar {
+.accordion-container::-webkit-scrollbar {
     width: 6px;
 }
 
-.accordion-container::-webkit-scrollbar-track,
-.summary-content::-webkit-scrollbar-track {
+.accordion-container::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 3px;
 }
 
-.accordion-container::-webkit-scrollbar-thumb,
-.summary-content::-webkit-scrollbar-thumb {
+.accordion-container::-webkit-scrollbar-thumb {
     background: #888;
     border-radius: 3px;
 }
 
-.accordion-container::-webkit-scrollbar-thumb:hover,
-.summary-content::-webkit-scrollbar-thumb:hover {
+.accordion-container::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
 
