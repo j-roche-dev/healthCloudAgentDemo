@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>AiD1z3CxuvdsZHyyHoMg2iTJE8wQw/U3mTNrjfnCrv8=_2</activeVersionIdentifier>
+    <developerName>Eigen_X_Account_Summary</developerName>
+    <masterLabel>Eigen X Account Summary</masterLabel>
+    <relatedEntity>Account</relatedEntity>
+    <templateVersions>
+        <content>Summarize the Account ({!$Input:Account.Id}) and related child objects like opportunities
+</content>
+        <generationTemplateConfigs>
+            <generationConfigDeveloperName>einstein_gpt__enUsLanguageStyle</generationConfigDeveloperName>
+        </generationTemplateConfigs>
+        <inputs>
+            <apiName>objectToSummarize</apiName>
+            <definition>SOBJECT://Account</definition>
+            <referenceName>Input:Account</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>AiD1z3CxuvdsZHyyHoMg2iTJE8wQw/U3mTNrjfnCrv8=_1</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content>{!$Flow:Eigen_X_Account_Summary_TTP_Flow.Prompt}
+</content>
+        <generationTemplateConfigs>
+            <generationConfigDeveloperName>einstein_gpt__enUsLanguageStyle</generationConfigDeveloperName>
+        </generationTemplateConfigs>
+        <inputs>
+            <apiName>objectToSummarize</apiName>
+            <definition>SOBJECT://Account</definition>
+            <referenceName>Input:Account</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <templateDataProviders>
+            <definition>flow://Eigen_X_Account_Summary_TTP_Flow</definition>
+            <parameters>
+                <definition>SOBJECT://Account</definition>
+                <isRequired>true</isRequired>
+                <parameterName>objectToSummarize</parameterName>
+                <valueExpression>{!$Input:Account}</valueExpression>
+            </parameters>
+            <referenceName>Flow:Eigen_X_Account_Summary_TTP_Flow</referenceName>
+        </templateDataProviders>
+        <versionIdentifier>AiD1z3CxuvdsZHyyHoMg2iTJE8wQw/U3mTNrjfnCrv8=_2</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__recordSummary</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

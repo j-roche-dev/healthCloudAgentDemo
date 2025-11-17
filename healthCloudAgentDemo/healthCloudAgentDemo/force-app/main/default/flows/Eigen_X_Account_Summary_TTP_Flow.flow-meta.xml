@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <name>Add_Case_Info</name>
+        <elementSubtype>AddPromptInstructions</elementSubtype>
+        <label>Add Case Info</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>$Output.Prompt</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <stringValue>Case:{!Loop_Cases.CaseNumber}
+Subject:{!Loop_Cases.Subject}
+Description:{!Loop_Cases.Description}
+Close Summary:{!Loop_Cases.SDO_Service_Close_Summary__c}
+Status:{!Loop_Cases.Status}
+Priority:{!Loop_Cases.Priority}
+</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Cases</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Add_Opty_Info</name>
+        <elementSubtype>AddPromptInstructions</elementSubtype>
+        <label>Add Opty Info</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>$Output.Prompt</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <stringValue>Opportunity
+Name: {!Loop_Opptys.Name}
+Stage: {!Loop_Opptys.StageName}
+Close Date: {!Loop_Opptys.CloseDate}
+Amount: {!Loop_Opptys.Amount}
+Probability:{!Loop_Opptys.Probability}
+Next Step:{!Loop_Opptys.NextStep}
+Type:{!Loop_Opptys.Type}
+
+
+</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Opptys</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Add_Summary_Instructions</name>
+        <elementSubtype>AddPromptInstructions</elementSubtype>
+        <label>Add Summary Instructions</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>$Output.Prompt</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <stringValue>You are a Salesforce assistant that summarizes an Account for business users.
+Given Account details, related Opportunities, and related Cases, generate a clear, business-friendly summary.
+
+Follow these rules:
+Goal: 
+-Provide a concise, readable overview of the Account.
+-Highlight key business details, sales pipeline, and support situation.
+-Avoid Salesforce jargon or raw API field names; use natural language.
+
+Input --
+Account - {!Get_Account.Name}
+Type: {!Get_Account.Type}
+Sales: {!Get_Account.SDO_Sales_Closed_Won_Value__c}
+Industry: {!Get_Account.Industry}
+
+
+How to Structure the Summary: Your response must be structured into the following sections, in this order, with these headings:
+A. Account Overview
+-Summarize who this Account is in 2–4 sentences.
+-Include, where available: Account name, type (prospect/customer/partner), location, industry, size (revenue and/or employees), and any notable segment/health information.
+B. Relationship &amp; History
+-Briefly describe how long we’ve been working with the Account if there is any clue from the data (for example, from the earliest Opportunity or Case dates).
+-Indicate whether they appear to be a new lead, an active customer, or a long-term customer.
+C. Sales Pipeline &amp; Revenue
+-Summarize the current Opportunity situation:
+----Count of open Opportunities.
+----Total open pipeline amount, if available.
+----Any large or strategically important Opportunities (for example, highest amount or late-stage deals).
+-Note:
+----Recent wins (closed won) and notable losses (closed lost).
+----Any patterns, such as many small deals vs. a few large ones, or deals stuck in certain stages.
+D. Support &amp; Cases
+-Summarize the support history based on Cases:
+-Number of open Cases and their overall priority.
+-Whether there are any high-priority or escalated issues.
+-General patterns, such as frequent low-priority questions vs. recurring high-impact incidents.
+-If all Cases are closed or there are none, highlight that support load is currently low.
+E. Key Risks &amp; Opportunities
+-Provide 2–4 bullet points calling out:
+-Risks, such as multiple high-priority open Cases, recent lost deals, or stalled large Opportunities.
+-Opportunities, such as large late-stage deals, strong closed-won history, or expansion potential in certain products or regions.
+F. Recommended Next Steps
+-Provide 3–5 concise next-step suggestions tailored to:
+-Sales (for example, following up on specific Opportunities or progressing a stalled deal).
+-Customer success/support (for example, proactively resolving open high-priority Cases).
+-Relationship building (for example, executive check-ins, QBRs, or renewal preparation).
+
+Style Guidelines
+-Write in clear, professional, and concise business language.
+-Use short paragraphs and bullet points where appropriate.
+-Refer to people and teams generically unless specific owner names are provided.
+-Do not invent data; rely only on the provided input. If something is unknown, say that the information is not available rather than guessing.
+-Do not mention internal field API names; instead use natural labels such as “annual revenue” or “health score.”
+
+Missing or Limited Data
+-If Opportunities are missing or the list is empty: Indicate that there are no active or historical Opportunities available in the data.
+-If Cases are missing or the list is empty: Indicate that there are no recorded support Cases in the data.
+
+If key Account attributes such as industry, revenue, or employees are missing: Do not list them as “unknown fields.” Simply omit them or, if relevant, mention that this information is not available.
+
+Output Format:
+
+-Output plain text using the following headings exactly, in this order:
+----Account Overview
+----Relationship &amp; History
+----Sales Pipeline &amp; Revenue
+----Support &amp; Cases
+----Key Risks &amp; Opportunities
+----Recommended Next Steps
+----Use bullet points under “Key Risks &amp; Opportunities” and “Recommended Next Steps.”
+</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <environments>Default</environments>
+    <interviewLabel>Eigen X Account Summary TTP Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Eigen X Account Summary TTP Flow</label>
+    <loops>
+        <name>Loop_Cases</name>
+        <label>Loop Cases</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <collectionReference>Get_Cases</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Add_Case_Info</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Add_Summary_Instructions</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <loops>
+        <name>Loop_Opptys</name>
+        <label>Loop Opptys</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <collectionReference>Get_Opportunities</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Add_Opty_Info</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Get_Cases</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>PromptFlow</processType>
+    <recordLookups>
+        <name>Get_Account</name>
+        <label>Get Account</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_Opportunities</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Input.objectToSummarize.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Account</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Cases</name>
+        <label>Get Cases</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Loop_Cases</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>AccountId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Input.objectToSummarize.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Case</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Subject</queriedFields>
+        <queriedFields>Description</queriedFields>
+        <queriedFields>Status</queriedFields>
+        <queriedFields>ClosedDate</queriedFields>
+        <queriedFields>SDO_Service_Close_Summary__c</queriedFields>
+        <queriedFields>CreatedDate</queriedFields>
+        <queriedFields>LastModifiedDate</queriedFields>
+        <queriedFields>Priority</queriedFields>
+        <queriedFields>CaseNumber</queriedFields>
+        <sortField>LastModifiedDate</sortField>
+        <sortOrder>Desc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Opportunities</name>
+        <label>Get Opportunities</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Loop_Opptys</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>AccountId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Input.objectToSummarize.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Opportunity</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Description</queriedFields>
+        <queriedFields>Amount</queriedFields>
+        <queriedFields>CloseDate</queriedFields>
+        <queriedFields>Probability</queriedFields>
+        <queriedFields>StageName</queriedFields>
+        <queriedFields>ForecastCategory</queriedFields>
+        <queriedFields>Type</queriedFields>
+        <queriedFields>NextStep</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <sortField>CloseDate</sortField>
+        <sortOrder>Desc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <capabilityTypes>
+            <name>PromptTemplateType://einstein_gpt__recordSummary</name>
+            <capabilityName>PromptTemplateType://einstein_gpt__recordSummary</capabilityName>
+            <inputs>
+                <name>objectToSummarize</name>
+                <capabilityInputName>objectToSummarize</capabilityInputName>
+                <dataType>SOBJECT://Account</dataType>
+                <isCollection>false</isCollection>
+            </inputs>
+        </capabilityTypes>
+        <connector>
+            <targetReference>Get_Account</targetReference>
+        </connector>
+        <triggerType>Capability</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>
