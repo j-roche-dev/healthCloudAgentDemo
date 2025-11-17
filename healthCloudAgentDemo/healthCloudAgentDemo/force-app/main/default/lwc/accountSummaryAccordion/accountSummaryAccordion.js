@@ -22,6 +22,7 @@ export default class AccountSummaryAccordion extends LightningElement {
     isFlowRunning = false;
     showFlowComponent = false;
     flowStartPending = false;
+    flowTimeoutId = null;
     wiredSummariesResult;
 
     flowApiName = 'Run_Eigen_X_Account_Summary';
@@ -74,7 +75,9 @@ export default class AccountSummaryAccordion extends LightningElement {
 
     formatSummaryLabel(summary) {
         if (summary.Summary_Date__c) {
-            const date = new Date(summary.Summary_Date__c);
+            // Parse date as local date to avoid timezone offset issues
+            const parts = summary.Summary_Date__c.split('-');
+            const date = new Date(parts[0], parts[1] - 1, parts[2]);
             return `Summary - ${date.toLocaleDateString()}`;
         }
         return summary.Name || 'Account Summary';
@@ -128,6 +131,22 @@ export default class AccountSummaryAccordion extends LightningElement {
         this.showFlowComponent = true;
         this.flowStartPending = true;
 
+        // Set a fallback timeout to stop spinner if flow doesn't complete
+        // Clear any existing timeout first
+        if (this.flowTimeoutId) {
+            clearTimeout(this.flowTimeoutId);
+        }
+
+        // 2 minute timeout as fallback
+        this.flowTimeoutId = setTimeout(() => {
+            console.warn('Flow timeout reached - stopping spinner and refreshing data');
+            this.isFlowRunning = false;
+            this.showFlowComponent = false;
+            this.flowTimeoutId = null;
+            // Refresh the data in case flow completed but event didn't fire
+            refreshApex(this.wiredSummariesResult);
+        }, 120000);
+
         // Flow will be started in renderedCallback once the component is rendered
         console.log('Flow component will be rendered and started');
     }
@@ -135,6 +154,12 @@ export default class AccountSummaryAccordion extends LightningElement {
     handleFlowStatusChange(event) {
         console.log('Flow status changed:', event.detail.status);
         console.log('Full event detail:', JSON.stringify(event.detail, null, 2));
+
+        // Clear the fallback timeout since we got an event
+        if (this.flowTimeoutId) {
+            clearTimeout(this.flowTimeoutId);
+            this.flowTimeoutId = null;
+        }
 
         if (event.detail.status === 'FINISHED') {
             this.isFlowRunning = false;
@@ -156,6 +181,13 @@ export default class AccountSummaryAccordion extends LightningElement {
                     console.error(`Variable ${variable.name}:`, variable.value);
                 });
             }
+        }
+    }
+
+    disconnectedCallback() {
+        // Clean up timeout if component is destroyed
+        if (this.flowTimeoutId) {
+            clearTimeout(this.flowTimeoutId);
         }
     }
 }
