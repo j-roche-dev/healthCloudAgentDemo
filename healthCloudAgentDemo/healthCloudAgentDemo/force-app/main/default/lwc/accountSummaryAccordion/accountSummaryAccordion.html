@@ -2,7 +2,7 @@
     <lightning-card title="Account Summaries" icon-name="custom:custom63">
         <!-- Actions slot for button when summaries exist -->
         <template if:true={hasSummaries}>
-            <div slot="actions">
+            <div slot="actions" class="slds-grid slds-grid_align-center slds-grid_vertical-align-center">
                 <lightning-button
                     label="Generate Summary"
                     onclick={handleGenerateSummary}
@@ -11,6 +11,9 @@
                     icon-name="utility:refresh"
                     class="slds-m-right_x-small">
                 </lightning-button>
+                <template if:true={isFlowRunning}>
+                    <lightning-spinner alternative-text="Generating summary" size="small"></lightning-spinner>
+                </template>
             </div>
         </template>
 
