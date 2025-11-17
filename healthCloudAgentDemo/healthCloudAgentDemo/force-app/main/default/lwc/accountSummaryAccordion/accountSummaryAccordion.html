@@ -97,9 +97,11 @@
             </template>
         </template>
 
-        <!-- Hidden flow component -->
-        <lightning-flow
-            onstatuschange={handleFlowStatusChange}>
-        </lightning-flow>
+        <!-- Flow component - only rendered when needed -->
+        <template if:true={showFlowComponent}>
+            <lightning-flow
+                onstatuschange={handleFlowStatusChange}>
+            </lightning-flow>
+        </template>
     </lightning-card>
 </template>

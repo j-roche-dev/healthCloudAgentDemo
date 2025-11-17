@@ -20,6 +20,8 @@ export default class AccountSummaryAccordion extends LightningElement {
     error;
     isLoading = true;
     isFlowRunning = false;
+    showFlowComponent = false;
+    flowStartPending = false;
     wiredSummariesResult;
 
     flowApiName = 'Run_Eigen_X_Account_Summary';
@@ -30,6 +32,20 @@ export default class AccountSummaryAccordion extends LightningElement {
 
     renderedCallback() {
         console.log('Component rendered. recordId:', this.recordId);
+
+        // If we're waiting to start the flow, do it now that the component is rendered
+        if (this.flowStartPending) {
+            this.flowStartPending = false;
+            const flowComponent = this.template.querySelector('lightning-flow');
+            if (flowComponent) {
+                console.log('Flow component found after render, starting flow:', this.flowApiName);
+                flowComponent.startFlow(this.flowApiName, this.flowInputVariables);
+            } else {
+                console.error('Flow component still not found after render');
+                this.isFlowRunning = false;
+                this.showFlowComponent = false;
+            }
+        }
     }
 
     @wire(getAccountSummaries, { accountId: '$recordId' })
@@ -109,14 +125,11 @@ export default class AccountSummaryAccordion extends LightningElement {
         }
 
         this.isFlowRunning = true;
-        const flowComponent = this.template.querySelector('lightning-flow');
-        if (flowComponent) {
-            console.log('Starting flow:', this.flowApiName);
-            flowComponent.startFlow(this.flowApiName, this.flowInputVariables);
-        } else {
-            console.error('Flow component not found');
-            this.isFlowRunning = false;
-        }
+        this.showFlowComponent = true;
+        this.flowStartPending = true;
+
+        // Flow will be started in renderedCallback once the component is rendered
+        console.log('Flow component will be rendered and started');
     }
 
     handleFlowStatusChange(event) {
@@ -125,11 +138,13 @@ export default class AccountSummaryAccordion extends LightningElement {
 
         if (event.detail.status === 'FINISHED') {
             this.isFlowRunning = false;
+            this.showFlowComponent = false;
             console.log('Flow finished successfully');
             // Refresh the summaries after flow completes
             refreshApex(this.wiredSummariesResult);
         } else if (event.detail.status === 'ERROR') {
             this.isFlowRunning = false;
+            this.showFlowComponent = false;
             console.error('Flow error status:', event.detail.status);
             console.error('Flow error detail:', event.detail);
             console.error('Flow error outputVariables:', event.detail.outputVariables);
