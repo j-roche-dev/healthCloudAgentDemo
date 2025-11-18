@@ -82,15 +82,21 @@ lightning-formatted-rich-text {
 }
 
 /* Enhanced rich text styling for manual DOM */
+.formatted-summary {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--lwc-colorTextDefault, #3e3e3c);
+}
+
 .formatted-summary strong {
     font-weight: 700;
     color: var(--lwc-colorTextDefault, #080707);
     font-size: 1rem;
     display: block;
-    margin-top: 1.5rem;
-    margin-bottom: 0.75rem;
+    margin: 0.8rem 0 0.4rem 0;
     border-bottom: 1px solid #e5e5e5;
     padding-bottom: 0.25rem;
+    text-indent: 0 !important;
 }
 
 .formatted-summary strong:first-child {
@@ -98,25 +104,34 @@ lightning-formatted-rich-text {
 }
 
 .formatted-summary ul {
-    margin-left: 1.5rem;
-    margin-bottom: 1rem;
-    padding-left: 0;
+    margin: 0.5rem 0;
+    padding-left: 1.2rem;
+    text-indent: 0;
 }
 
 .formatted-summary li {
-    margin-bottom: 0.5rem;
-    line-height: 1.5;
+    margin-bottom: 0.2rem;
+    line-height: 1.4;
     list-style-type: disc;
+    text-indent: 0;
 }
 
 .formatted-summary p {
-    margin-bottom: 1rem;
-    line-height: 1.6;
-    color: var(--lwc-colorTextDefault, #3e3e3c);
+    margin: 0.5rem 0;
+    line-height: 1.5;
+    text-indent: 0;
 }
 
 .formatted-summary p:empty {
     display: none;
+}
+
+.formatted-summary p:first-child {
+    margin-top: 0;
+}
+
+.formatted-summary p:last-child {
+    margin-bottom: 0;
 }
 
 /* Empty state styling */

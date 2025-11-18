@@ -97,41 +97,52 @@ export default class AccountSummaryAccordion extends LightningElement {
     convertMarkdownToHtml(markdownText) {
         if (!markdownText) return '';
         
-        console.log('Original markdown:', markdownText);
-        
         let html = markdownText;
         
-        // Convert **bold** to <strong>bold</strong>
-        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        // Split into sections by double line breaks to handle paragraphs properly
+        const sections = html.split(/\n\n+/);
         
-        // Convert line breaks to <br> tags but preserve paragraph structure  
-        html = html.replace(/\n\n/g, '</p><p>');
-        html = html.replace(/\n/g, '<br>');
+        const processedSections = sections.map(section => {
+            // Skip empty sections
+            if (!section.trim()) return '';
+            
+            // Check if this section starts with **bold** (heading)
+            if (section.match(/^\*\*(.*?)\*\*/)) {
+                // Convert **bold** to <strong> for headings and don't wrap in <p>
+                return section.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            }
+            
+            // Check if this section contains bullet points
+            if (section.includes('\n- ') || section.startsWith('- ')) {
+                // Handle bullet point sections
+                const lines = section.split('\n');
+                const listItems = lines
+                    .filter(line => line.trim())
+                    .map(line => {
+                        if (line.trim().startsWith('- ')) {
+                            return '<li>' + line.replace(/^\s*- /, '') + '</li>';
+                        } else {
+                            // Non-bullet line in a bullet section
+                            return line;
+                        }
+                    })
+                    .join('');
+                
+                // Wrap consecutive <li> in <ul>
+                return listItems.replace(/(<li>.*?<\/li>)/gs, '<ul>$1</ul>').replace(/<\/ul><ul>/g, '');
+            }
+            
+            // Regular paragraph - convert **bold** and wrap in <p>
+            const processed = section.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            return '<p>' + processed + '</p>';
+        });
         
-        // Wrap in paragraph tags
-        html = '<p>' + html + '</p>';
-        
-        // Clean up empty paragraphs
-        html = html.replace(/<p><\/p>/g, '');
-        html = html.replace(/<p><br><\/p>/g, '');
-        
-        // Handle bullet points - convert lines starting with - to <li>
-        html = html.replace(/<p>- (.*?)<\/p>/g, '<li>$1</li>');
-        html = html.replace(/<br>- (.*?)<br>/g, '</li><li>$1');
-        
-        // Wrap consecutive <li> elements in <ul>
-        html = html.replace(/(<li>.*?<\/li>)/gs, '<ul>$1</ul>');
-        
-        // Clean up nested lists and extra breaks
-        html = html.replace(/<\/ul><ul>/g, '');
-        html = html.replace(/<br><ul>/g, '<ul>');
-        html = html.replace(/<\/ul><br>/g, '</ul>');
+        // Join sections and clean up
+        html = processedSections.filter(section => section.trim()).join('');
         
         // Handle HTML entities that might be present
         html = html.replace(/&amp;/g, '&');
         html = html.replace(/&#39;/g, "'");
-        
-        console.log('Converted HTML:', html);
         
         return html;
     }
