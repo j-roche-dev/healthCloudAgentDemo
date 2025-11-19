@@ -51,22 +51,20 @@
                 <template if:true={hasMultipleSummaries}>
                     <div class="accordion-tabs slds-border_top">
                         <div class="tabs-header slds-p-horizontal_medium slds-p-vertical_x-small slds-text-heading_small">
-                            Other Summaries
+                            Other Summaries (Recent 3)
                         </div>
-                        <template for:each={accountSummaries} for:item="summary">
-                            <template if:false={summary.isActive}>
-                                <div
-                                    key={summary.Id}
-                                    class="tab-item slds-p-around_small slds-border_top"
-                                    data-id={summary.Id}
-                                    onclick={handleSectionClick}
-                                >
-                                    <div class="tab-content">
-                                        <lightning-icon icon-name="utility:chevronright" size="xx-small" class="slds-m-right_x-small"></lightning-icon>
-                                        <span class="tab-label">{summary.label}</span>
-                                    </div>
+                        <template for:each={recentOtherSummaries} for:item="summary">
+                            <div
+                                key={summary.Id}
+                                class="tab-item slds-p-around_small slds-border_top"
+                                data-id={summary.Id}
+                                onclick={handleSectionClick}
+                            >
+                                <div class="tab-content">
+                                    <lightning-icon icon-name="utility:chevronright" size="xx-small" class="slds-m-right_x-small"></lightning-icon>
+                                    <span class="tab-label">{summary.label}</span>
                                 </div>
-                            </template>
+                            </div>
                         </template>
                     </div>
                 </template>

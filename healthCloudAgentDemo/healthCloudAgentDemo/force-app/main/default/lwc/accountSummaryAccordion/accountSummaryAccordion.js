@@ -177,6 +177,13 @@ export default class AccountSummaryAccordion extends LightningElement {
         return this.accountSummaries.find(s => s.isActive);
     }
 
+    get recentOtherSummaries() {
+        // Return only the 3 most recent non-active summaries
+        return this.accountSummaries
+            .filter(s => !s.isActive)
+            .slice(0, 3);
+    }
+
     get flowInputVariables() {
         return [
             {
